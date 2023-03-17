@@ -20,3 +20,24 @@ class Student(models.Model):
     branch = models.CharField(max_length=100)
     about_me = models.TextField()
     skills = ArrayField(models.CharField(max_length=50))
+
+    isRestricted = models.BooleanField(default=False)
+
+
+class Post(models.Model):
+    TYPE_PROJECT = '1'
+    TYPE_HACKATHON = '2'
+    TYPE_CHOICES = [
+        (TYPE_PROJECT, 'Project'),
+        (TYPE_HACKATHON, 'Hackathon'),
+    ]
+
+    # 1 student -> many Posts
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    type = models.CharField(
+        max_length=1, choices=TYPE_CHOICES, default=TYPE_PROJECT)
+    tags = ArrayField(models.CharField(max_length=100))
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = ArrayField(models.BigIntegerField())
