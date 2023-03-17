@@ -23,6 +23,9 @@ class Student(models.Model):
 
     isRestricted = models.BooleanField(default=False)
 
+    def __str__(self) -> str:
+        return self.user.first_name + ' ' + self.user.last_name
+
 
 class Post(models.Model):
     TYPE_PROJECT = '1'
@@ -40,4 +43,8 @@ class Post(models.Model):
         max_length=1, choices=TYPE_CHOICES, default=TYPE_PROJECT)
     tags = ArrayField(models.CharField(max_length=100))
     created_at = models.DateTimeField(auto_now_add=True)
-    likes = ArrayField(models.BigIntegerField())
+    likes = ArrayField(models.BigIntegerField(
+        blank=True, null=True), null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.title
