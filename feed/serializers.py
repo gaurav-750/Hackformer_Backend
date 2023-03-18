@@ -50,7 +50,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = serializers.SerializerMethodField(
+        method_name='get_comments_length')
     likes = serializers.SerializerMethodField(
         method_name='get_likes', read_only=True)
     student = SimpleProfileSerializer(read_only=True)
@@ -59,6 +60,10 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'title', 'description', 'type',
                   'tags', 'created_at', 'likes', 'student', 'comments']
+
+    def get_comments_length(self, post: Post):
+        # todo return the number of comments on the post
+        return Comment.objects.filter(post_id=post.id).count()
 
     def get_likes(self, post: Post):
         students = User.objects.filter(id__in=post.likes)
