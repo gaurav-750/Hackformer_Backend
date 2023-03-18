@@ -37,6 +37,14 @@ class StudentProfileView(RetrieveAPIView, UpdateAPIView):
 
 
 # todo Posts
-class AllPost(ListAPIView):
-    queryset = Post.objects.all()
+class AllPost(ListAPIView, CreateAPIView):
+    queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_context(self):
+        user = User.objects.get(id=self.request.user.id)
+        student = Student.objects.get(user_id=user.id)
+        return {
+            "student_id": student.id
+        }

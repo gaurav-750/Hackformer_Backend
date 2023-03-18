@@ -49,9 +49,10 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True)
-    likes = serializers.SerializerMethodField(method_name='get_likes')
-    student = SimpleProfileSerializer()
+    comments = CommentSerializer(many=True, read_only=True)
+    likes = serializers.SerializerMethodField(
+        method_name='get_likes', read_only=True)
+    student = SimpleProfileSerializer(read_only=True)
 
     class Meta:
         model = Post
@@ -62,3 +63,12 @@ class PostSerializer(serializers.ModelSerializer):
         students = User.objects.filter(id__in=post.likes)
         serializer = SimpleUserSerializer(students, many=True)
         return serializer.data
+
+    def create(self, validated_data):
+        student_id = self.context['student_id']
+        likes = []
+
+        return Post.objects.create(
+            likes=likes,
+            student_id=student_id,  **validated_data
+        )
