@@ -11,4 +11,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('student/<str:username>',
          views.StudentProfileView.as_view(), name='student-profile'),
+    path('post/', views.AllPost.as_view(), name='all-posts')
 ]

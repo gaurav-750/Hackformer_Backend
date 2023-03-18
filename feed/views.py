@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
 
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView, ListAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -13,8 +13,8 @@ from rest_framework.response import Response
 
 from core.models import User
 
-from .models import Student
-from .serializers import ProfileSerializer, StudentSerializer
+from .models import Student, Post
+from .serializers import ProfileSerializer, StudentSerializer, PostSerializer
 
 
 # Create your views here
@@ -34,3 +34,9 @@ class StudentProfileView(RetrieveAPIView, UpdateAPIView):
             user_id=user.id
         )
         return student
+
+
+# todo Posts
+class AllPost(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
