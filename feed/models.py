@@ -48,3 +48,11 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class Comment(models.Model):
+    # *1 post -> many comments
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    # *1 Student -> many comments
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    content = models.TextField()
