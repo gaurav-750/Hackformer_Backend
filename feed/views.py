@@ -84,3 +84,10 @@ class CommentView(ModelViewSet):
         return {
             'student_id': student.id
         }
+
+
+@api_view(['GET'])
+def comment_on_post(request, pk):
+    queryset = Comment.objects.filter(post_id=pk)
+    serializer = CommentSerializer(queryset, many=True)
+    return Response(serializer.data)
