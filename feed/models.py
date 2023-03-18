@@ -14,7 +14,7 @@ class Student(models.Model):
     title = models.CharField(max_length=55)
     birth_date = models.DateField(null=True, blank=True)
     phone = models.CharField(max_length=255)
-    gender = models.CharField(max_length=15)
+    gender = models.CharField(max_length=20)
     college = models.TextField()
     college_city = models.CharField(max_length=100)
     current_year = models.CharField(max_length=15)
