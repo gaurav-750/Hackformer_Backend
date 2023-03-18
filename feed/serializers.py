@@ -72,3 +72,15 @@ class PostSerializer(serializers.ModelSerializer):
             likes=likes,
             student_id=student_id,  **validated_data
         )
+
+
+class CreateCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'post']
+
+    def save(self, **kwargs):
+        student_id = self.context['student_id']
+        Comment.objects.create(
+            student_id=student_id, **self.validated_data
+        )

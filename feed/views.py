@@ -5,16 +5,19 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView, ListAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin, RetrieveModelMixin
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView, \
+    CreateAPIView, ListAPIView, DestroyAPIView, \
+    RetrieveDestroyAPIView, ListCreateAPIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, \
+    UpdateModelMixin, DestroyModelMixin,  RetrieveModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core.models import User
 
-from .models import Student, Post
-from .serializers import ProfileSerializer, StudentSerializer, PostSerializer
+from .models import Comment, Student, Post
+from .serializers import CommentSerializer, CreateCommentSerializer, ProfileSerializer, StudentSerializer, PostSerializer
 
 
 # Create your views here
@@ -66,3 +69,18 @@ def like_post(request):
     return Response({
         "message": "ok"
     })
+
+
+# todo Comment
+class CommentView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
+    queryset = Comment.objects.all()
+    serializer_class = CreateCommentSerializer
+
+    def get_serializer_context(self):
+        user = self.request.user
+        student = Student.objects.get(user_id=user.id)
+        return {
+            'student_id': student.id
+        }

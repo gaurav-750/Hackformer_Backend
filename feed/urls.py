@@ -6,6 +6,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register('student', views.StudentViewset)
+router.register('comment', views.CommentView)
 
 urlpatterns = [
     path('', include(router.urls)),
