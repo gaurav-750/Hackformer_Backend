@@ -167,7 +167,11 @@ def recommendations(request):
         stud = dict(students_list[v])
         print(stud)
         v += 1
-        res.append(final_similarity(current_stud, stud))
+        fs = final_similarity(current_stud, stud)
+        res.append({'fs': fs,
+                    'id': stud.id})
+
+    print('🛑🛑', res)
 
     # res = [1.0, 0.8666666666666667, 0.8666666666666667, 0.6]
     sid = []
