@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
-
+from rest_framework.decorators import action
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView, ListAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -48,3 +48,21 @@ class AllPost(ListAPIView, CreateAPIView):
         return {
             "student_id": student.id
         }
+
+
+# todo Like/Dislike a post:
+@api_view(['POST'])
+def like_post(request):
+    post_id = request.data['post_id']
+    post = Post.objects.get(id=post_id)
+    user_id = request.user.id
+
+    if user_id not in post.likes:
+        post.likes.append(user_id)
+    else:
+        post.likes.remove(user_id)
+    post.save()
+
+    return Response({
+        "message": "ok"
+    })
