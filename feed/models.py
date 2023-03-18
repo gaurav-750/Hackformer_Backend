@@ -11,6 +11,7 @@ class Student(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
+    title = models.CharField(max_length=55)
     birth_date = models.DateField(null=True, blank=True)
     phone = models.CharField(max_length=255)
     gender = models.CharField(max_length=15)
