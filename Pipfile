@@ -13,6 +13,10 @@ djangorestframework-simplejwt = "*"
 dj-database-url = "*"
 gunicorn = "*"
 whitenoise = "*"
+pandas = "*"
+numpy = "*"
+nltk = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 autopep8 = "*"
