@@ -12,6 +12,7 @@ djoser = "*"
 djangorestframework-simplejwt = "*"
 dj-database-url = "*"
 gunicorn = "*"
+whitenoise = "*"
 
 [dev-packages]
 autopep8 = "*"
