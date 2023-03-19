@@ -1,7 +1,9 @@
+import json
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+import requests
 
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -37,6 +39,27 @@ class StudentViewset(CreateModelMixin,
                      GenericViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = StudentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # Make the POST API call to a particular endpoint using the requests library
+        url = 'https://api-68BE6A4A-0F0A-4D7A-B255-0A82A0F4D252.sendbird.com/v3/users'
+        unique_id = str(request.data['user'])
+        data = {
+            "user_id": unique_id,
+            "nickname": request.data['title'],
+            "profile_url": "",
+            "profile_file": ""
+        }
+
+        headers = {"Api-token": "2ff72c7d4712ab37955d9f2a391c57859f493c41",
+                   "Content-Type": "application/json"
+                   }
+        res = requests.post(url, data=json.dumps(data), headers=headers)
+        return Response({"response": serializer.data})
 
 
 class StudentProfileView(RetrieveAPIView, UpdateAPIView):
@@ -164,16 +187,16 @@ def recommendations(request):
     res = []
     v = 0
     for i in students_list:
-        stud = dict(students_list[v])
-        print(stud)
+        stud: Student = dict(students_list[v])
+        print('😁', stud)
         v += 1
         fs = final_similarity(current_stud, stud)
         res.append({'fs': fs,
-                    'id': stud.id})
+                    'id': stud['user']})
 
     print('🛑🛑', res)
 
-    # res = [1.0, 0.8666666666666667, 0.8666666666666667, 0.6]
+    # res = [{'fs': 1.0, 'id': 2}, {'fs': 0.8666666666666667, 'id': 3}, {'fs': 0.6, 'id': 5}, {'fs': 0.7333333333333334, 'id': 4}]
     sid = []
     for i in res:
         if i == 1:
@@ -182,7 +205,17 @@ def recommendations(request):
 
     print('res', res)
 
-    arr_new = []
+    arr_new = sorted(res, key=lambda x: x['fs'], reverse=True)
+    #  [{'fs': 1.0, 'id': 2}, {'fs': 0.8666666666666667, 'id': 3},
+    #  {'fs': 0.7333333333333334, 'id': 4},
+    # {'fs': 0.6, 'id': 5}, {'fs': 0.11162790697674418, 'id': 10}]
+
+    # todo Fetch 1st 2 user id and return 'user' object
+    for u in arr_new:
+        if len(sid) < 2 and u['id'] not in sid:
+            sid.append(u['id'])
+    print('sid => ', sid)
+
     for elem in res:
         arr_new.append(elem)
     arr_new.sort()

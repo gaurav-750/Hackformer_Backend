@@ -14,6 +14,6 @@ urlpatterns = [
          views.StudentProfileView.as_view(), name='student-profile'),
     path('post/', views.AllPost.as_view(), name='all-posts'),
     path('post/like/', views.like_post),
-    path('post/comment/<int:pk>/', views.comment_on_post),
+    path('post/<int:pk>/comment/', views.comment_on_post),
     path('student/self/recommendations/', views.recommendations),
 ]
