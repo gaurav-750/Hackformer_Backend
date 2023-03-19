@@ -69,6 +69,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://project-buddy.netlify.app",
 ]
 
 ROOT_URLCONF = 'config.urls'
