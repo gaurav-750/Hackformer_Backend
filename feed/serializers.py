@@ -38,7 +38,7 @@ class SimpleProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['user']
+        fields = ['user', 'title']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -61,7 +61,8 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'title', 'description', 'type',
-                  'tags', 'created_at', 'likes', 'student', 'comments', 'isLikedByCurrentUser']
+                  'tags', 'created_at', 'likes', 'student',
+                  'comments', 'isLikedByCurrentUser']
 
     def get_comments_length(self, post: Post):
         # todo return the number of comments on the post
