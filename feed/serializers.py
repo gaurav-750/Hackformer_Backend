@@ -23,7 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['user', 'phone', 'birth_date',
+        fields = ['user', 'title', 'phone', 'birth_date',
                   'college', 'college_city', 'skills', 'about_me']
 
 

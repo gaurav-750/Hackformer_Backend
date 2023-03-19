@@ -202,5 +202,5 @@ def recommendations(request):
             user_ids.append(u['id'])
 
     queryset = Student.objects.filter(user__in=user_ids)
-    serializer = StudentSerializer(queryset, many=True)
+    serializer = ProfileSerializer(queryset, many=True)
     return Response(serializer.data)
