@@ -24,7 +24,6 @@ from .models import Comment, Student, Post
 from .serializers import CommentSerializer, CreateCommentSerializer, ProfileSerializer, StudentSerializer, PostSerializer
 from collections import Counter
 
-import pandas as pd
 import numpy as np
 import re
 import nltk
