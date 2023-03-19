@@ -55,11 +55,13 @@ class PostSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField(
         method_name='get_likes', read_only=True)
     student = SimpleProfileSerializer(read_only=True)
+    isLikedByCurrentUser = serializers.SerializerMethodField(
+        method_name='get_isLikedByCurrentUser')
 
     class Meta:
         model = Post
         fields = ['id', 'title', 'description', 'type',
-                  'tags', 'created_at', 'likes', 'student', 'comments']
+                  'tags', 'created_at', 'likes', 'student', 'comments', 'isLikedByCurrentUser']
 
     def get_comments_length(self, post: Post):
         # todo return the number of comments on the post
@@ -69,6 +71,12 @@ class PostSerializer(serializers.ModelSerializer):
         students = User.objects.filter(id__in=post.likes)
         serializer = SimpleUserSerializer(students, many=True)
         return serializer.data
+
+    def get_isLikedByCurrentUser(self, post: Post):
+        student_id = self.context['student_id']
+        student: Student = Student.objects.get(id=student_id)
+
+        return student.user.id in post.likes
 
     def create(self, validated_data):
         student_id = self.context['student_id']
