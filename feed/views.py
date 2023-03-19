@@ -22,16 +22,15 @@ from core.models import User
 
 from .models import Comment, Student, Post
 from .serializers import CommentSerializer, CreateCommentSerializer, ProfileSerializer, StudentSerializer, PostSerializer
-
+from collections import Counter
 
 import pandas as pd
 import numpy as np
 import re
 import nltk
 import difflib
-from collections import Counter
 
-nltk.download('stopwords')
+MAX_RECOMMENDATIONS = 3
 
 
 # Create your views here
@@ -128,12 +127,14 @@ def comment_on_post(request, pk):
     return Response(serializer.data)
 
 
+nltk.download('stopwords')
+
+
 @api_view()
 def recommendations(request):
     students = Student.objects.all()
     students_list = StudentSerializer(students, many=True)
     students_list = students_list.data
-    print('🛑🛑', students_list)
 
     stop_words = stopwords.words('english')
     stemmer = SnowballStemmer('english')
@@ -178,7 +179,6 @@ def recommendations(request):
             return cosine
 
         ss = coml(a.skills, b['skills'])
-        #
         final_sim = (1.2*AS + 0.8*ss)/2
         return final_sim
 
@@ -188,38 +188,19 @@ def recommendations(request):
     v = 0
     for i in students_list:
         stud: Student = dict(students_list[v])
-        print('😁', stud)
         v += 1
         fs = final_similarity(current_stud, stud)
         res.append({'fs': fs,
                     'id': stud['user']})
 
-    print('🛑🛑', res)
-
-    # res = [{'fs': 1.0, 'id': 2}, {'fs': 0.8666666666666667, 'id': 3}, {'fs': 0.6, 'id': 5}, {'fs': 0.7333333333333334, 'id': 4}]
-    sid = []
-    for i in res:
-        if i == 1:
-            res[res.index(i)] = -1
-            break
-
-    print('res', res)
-
     arr_new = sorted(res, key=lambda x: x['fs'], reverse=True)
-    #  [{'fs': 1.0, 'id': 2}, {'fs': 0.8666666666666667, 'id': 3},
-    #  {'fs': 0.7333333333333334, 'id': 4},
-    # {'fs': 0.6, 'id': 5}, {'fs': 0.11162790697674418, 'id': 10}]
 
-    # todo Fetch 1st 2 user id and return 'user' object
+    user_ids = []
+    # todo insert user ids in
     for u in arr_new:
-        if len(sid) < 2 and u['id'] not in sid:
-            sid.append(u['id'])
-    print('sid => ', sid)
+        if len(user_ids) < MAX_RECOMMENDATIONS and u['id'] not in user_ids and u['fs'] != 1:
+            user_ids.append(u['id'])
 
-    for elem in res:
-        arr_new.append(elem)
-    arr_new.sort()
-
-    sid.append(res.index(arr_new[len(res)-1]))
-    sid.append(res.index(arr_new[len(res)-2]))
-    return Response({'sid': sid})
+    queryset = Student.objects.filter(user__in=user_ids)
+    serializer = StudentSerializer(queryset, many=True)
+    return Response(serializer.data)
